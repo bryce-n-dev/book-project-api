@@ -21,12 +21,12 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user)
     if db_user:
         raise HTTPException(status_code=400, detail="User already created")
-    return crud.create_user(db=db, user=user)
+    return crud.create_user(db, user)
 
 # Get user information
 @app.get("/users/{user_id}", tags=["users"])
 def get_user(user_id: str, db: Session = Depends(get_db)):
-    db_user = crud.get_user(db, user_id=user_id)
+    db_user = crud.get_user(db, user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
@@ -44,32 +44,34 @@ def delete_user(user_id: str, db: Session = Depends(get_db)):
 # Get favourite books
 @app.get("/users/{user_id}/favourites", tags=["shelves"])
 def get_favourites(user_id: str, db: Session = Depends(get_db)):
-    pass
-
-# Get {integer} most liked books
-@app.get("/favourites", tags=["public"])
-def get_top_favourites(amount: int = 5, db: Session = Depends(get_db)):
-    pass
+    db_user = crud.get_user(db, user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return crud.get_favourites(db, user_id)
 
 # Get books from database that start with {search} value
 @app.get("/books", tags=["public"])
 def get_books(search: str, db: Session = Depends(get_db)):
-    pass
-
-# Get user recommendations
-@app.get("/users/{user_id}/recommendations", tags=["shelves"])
-def get_user_recommendations(user_id: str, db: Session = Depends(get_db)):
-    pass
+    return crud.get_books(db, search)
 
 # Get shelf
 @app.get("/users/{user_id}/shelves/{shelf_id}", tags=["shelves"])
 def get_user_shelf(user_id: str, shelf_id: int, db: Session = Depends(get_db)):
-    pass
+    db_user = crud.get_user(db, user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return crud.get_user_shelf(db, user_id, shelf_id)
 
 # Get user book
 @app.get("/users/{user_id}/books/{isbn}", tags=["user-books"])
 def get_user_book(user_id: str, isbn: str, db: Session = Depends(get_db)):
-    pass
+    db_user = crud.get_user(db, user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    db_book = crud.get_user_book(db, user_id, isbn)
+    if db_book is None:
+        raise HTTPException(status_code=404, detail="User book not found")
+    return db_book
 
 # Can be used to update favourite or update shelf ID
 @app.put("/users/{user_id}/books/{isbn}", tags=["user-books"])

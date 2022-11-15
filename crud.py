@@ -26,27 +26,19 @@ def delete_user(db: Session, user_id: str):
 
 # Get favourite books
 def get_favourites(db: Session, user_id: str):
-    db.query()
-
-# Get {integer} most liked books
-def get_top_favourites(db: Session, amount: int = 5):
-    db.query()
+    return db.query(models.UserBook).filter(models.UserBook.user_id == user_id).filter(models.UserBook.is_favourite == True).all()
 
 # Get books from database that start with {search} value
 def get_books(db: Session, search: str):
-    db.query()
-
-# Get user recommendations
-def get_user_recommendations(db: Session, user_id: str):
-    pass
+    return db.query(models.BookInfo).filter(models.BookInfo.title.like(search + "%")).all()
 
 # Get shelf
 def get_user_shelf(db: Session, user_id: str, shelf_id: int):
-    db.query()
+    return db.query(models.UserBook).filter(models.UserBook.user_id == user_id).filter(models.UserBook.shelf_id == shelf_id).all()
 
 # Get user book
 def get_user_book(db: Session, user_id: str, isbn: str):
-    db.query()
+    return db.query(models.UserBook).filter(models.UserBook.user_id == user_id).filter(models.UserBook.isbn == isbn).first()
 
 # Can be used to update favourite or update shelf ID
 def update_book(db: Session, user_id: str, isbn: Union[int, None] = None, favourite: Union[bool, None] = None):
