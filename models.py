@@ -65,8 +65,8 @@ class Shelf(Base):
 class UserBook(Base):
     __tablename__ = "user_book"
 
-    isbn = Column(String, ForeignKey("book_info.isbn"), nullable=False, primary_key=True)
-    user_id = Column(String, ForeignKey("user.user_id"), nullable=False, primary_key=True)
+    isbn = Column(String, primary_key=True, nullable=False)
+    user_id = Column(String, primary_key=True, nullable=False)
     shelf_id = Column(Integer, ForeignKey("shelf.shelf_id"), nullable=False)
     pages_read = Column(Integer)
     date_started_reading = Column(Date)
