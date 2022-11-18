@@ -26,7 +26,7 @@ def delete_user(db: Session, user_id: str):
 
 # Get favourite books
 def get_favourites(db: Session, user_id: str):
-    return db.query(models.UserBook).filter(models.UserBook.user_id == user_id).filter(models.UserBook.is_favourite == True).all()
+    return db.query(models.UserBook.isbn, models.BookInfo.title, models.BookInfo.cover_url).join(models.BookInfo, models.UserBook.isbn == models.BookInfo.isbn).filter(models.UserBook.user_id == user_id).filter(models.UserBook.is_favourite == True).all()
 
 # Get books from database that start with {search} value
 def get_books(db: Session, search: str):
@@ -38,7 +38,7 @@ def get_user_shelf(db: Session, user_id: str, shelf_id: int):
 
 # Get user book
 def get_user_book(db: Session, user_id: str, isbn: str):
-    return db.query(models.UserBook).filter(models.UserBook.user_id == user_id).filter(models.UserBook.isbn == isbn).first()
+    return db.query(models.UserBook.isbn,models.UserBook.rating, models.UserBook.rating, models.UserBook.is_favourite, models.UserBook.review,models.BookInfo.title, models.BookInfo.cover_url, models.BookInfo.blurb, models.BookInfo.year,models.Author.name, models.Genre.genre).join(models.BookInfo, models.UserBook.isbn == models.BookInfo.isbn).join(models.Author, models.BookInfo.author_id == models.Author.author_id).join(models.Genre, models.Genre.genre_id == models.BookInfo.genre_id).filter(models.UserBook.user_id == user_id).filter(models.UserBook.isbn == isbn).first()
 
 # Can be used to update favourite or update shelf ID
 def update_book(db: Session, user_id: str, isbn: Union[int, None] = None, favourite: Union[bool, None] = None):
