@@ -1,9 +1,10 @@
 from sqlalchemy.orm import Session
 from typing import Union
 from fastapi import Depends, FastAPI, HTTPException
+import urllib.parse
 
 import crud, models, schemas
-from database import SessionLocal, engine
+from database import SessionLocal
 
 
 app = FastAPI()
@@ -18,7 +19,7 @@ def get_db():
 # Create new user
 @app.post("/users", tags=["users"])
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_user(db, user)
+    db_user = crud.get_user(db, user.user_id)
     if db_user:
         raise HTTPException(status_code=400, detail="User already created")
     return crud.create_user(db, user)
@@ -31,16 +32,6 @@ def get_user(user_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
-# Update user information
-@app.put("/users/{user_id}", tags=["users"])
-def update_user(user_id: str, db: Session = Depends(get_db)):
-    pass
-
-# Delete user
-@app.delete("/users/{user_id}", tags=["users"])
-def delete_user(user_id: str, db: Session = Depends(get_db)):
-    pass
-
 # Get favourite books
 @app.get("/users/{user_id}/favourites", tags=["shelves"])
 def get_favourites(user_id: str, db: Session = Depends(get_db)):
@@ -52,6 +43,9 @@ def get_favourites(user_id: str, db: Session = Depends(get_db)):
 # Get books from database that start with {search} value
 @app.get("/books", tags=["public"])
 def get_books(search: str, db: Session = Depends(get_db)):
+    # TO-DO: clean up input string
+    search = urllib.parse.unquote(search)
+    print(search)
     return crud.get_books(db, search)
 
 # Get shelf
