@@ -65,15 +65,24 @@ def get_user_book(user_id: str, isbn: str, db: Session = Depends(get_db)):
 
 # Can be used to update favourite or update shelf ID
 @app.put("/users/{user_id}/books/{isbn}", tags=["user-books"])
-def update_book(user_id: str, isbn: Union[int, None] = None, favourite: Union[bool, None] = None, db: Session = Depends(get_db)):
+def update_user_book(user_id: str, isbn: Union[int, None] = None, favourite: Union[bool, None] = None, db: Session = Depends(get_db)):
     pass
 
 # Remove book from bookshelf (delete entry from DB - user_book)
 @app.delete("/users/{user_id}/books/{isbn}", tags=["user-books"])
-def delete_book_from_shelf(user_id: str, isbn: str, db: Session = Depends(get_db)):
+def delete_user_book(user_id: str, isbn: str, db: Session = Depends(get_db)):
     pass
 
 # Add book to bookshelf (add entry to DB - user_book)
-@app.post("/users/{user_id}/books/{isbn}", tags=["user-books"])
-def add_book_to_shelf(book: schemas.Book, user_id: int, isbn: str, db: Session = Depends(get_db)):
-    pass
+@app.post("/users/{user_id}/books", tags=["user-books"])
+def create_user_book(user_book: schemas.UserBookCreate, user_id: str, db: Session = Depends(get_db)):
+    db_user = crud.get_user(db, user_id=user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    db_book = crud.get_book_by_isbn(db, isbn=user_book.isbn)
+    if db_book is None:
+        raise HTTPException(status_code=404, detail="Book ISBN does not exist")
+    db_user_book = crud.get_user_book(db, user_id=user_id, isbn=user_book.isbn)
+    if db_user_book is not None:
+        raise HTTPException(status_code=400, detail="User book already exists")
+    return crud.create_user_book(db, user_book=user_book, user_id=user_id)
