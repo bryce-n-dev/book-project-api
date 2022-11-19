@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from typing import Union
 from fastapi import Depends, FastAPI, HTTPException
-import urllib.parse
 
 import crud, models, schemas
 from database import SessionLocal
@@ -43,9 +42,6 @@ def get_favourites(user_id: str, db: Session = Depends(get_db)):
 # Get books from database that start with {search} value
 @app.get("/books", tags=["public"])
 def get_books(search: str, db: Session = Depends(get_db)):
-    # TO-DO: clean up input string
-    search = urllib.parse.unquote(search)
-    print(search)
     return crud.get_books(db, search)
 
 # Get shelf
