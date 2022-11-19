@@ -16,14 +16,6 @@ def create_user(db: Session, user: schemas.UserCreate):
 def get_user(db: Session, user_id: str):
     return db.query(models.User).filter(models.User.user_id == user_id).first()
 
-# Update user information
-def update_user(db: Session, user_id: str):
-    pass
-
-# Delete user
-def delete_user(db: Session, user_id: str):
-    pass
-
 # Get favourite books
 def get_favourites(db: Session, user_id: str):
     return db.query(models.UserBook.isbn, models.BookInfo.title, models.BookInfo.cover_url).join(models.BookInfo, models.UserBook.isbn == models.BookInfo.isbn).filter(models.UserBook.user_id == user_id).filter(models.UserBook.is_favourite == True).all()
