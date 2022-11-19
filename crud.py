@@ -22,7 +22,7 @@ def get_favourites(db: Session, user_id: str):
 
 # Get books from database that start with {search} value
 def get_books(db: Session, search: str):
-    return db.query(models.BookInfo).filter(models.BookInfo.title.like(search + "%")).all()
+    return db.query(models.BookInfo).filter(models.BookInfo.title.contains(search)).all()
 
 # Get shelf
 def get_user_shelf(db: Session, user_id: str, shelf_id: int):
