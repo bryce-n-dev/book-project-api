@@ -1,8 +1,7 @@
 from sqlalchemy.orm import Session
-from typing import Union
 from fastapi import Depends, FastAPI, HTTPException
 
-import crud, models, schemas
+import crud, schemas
 from database import SessionLocal
 
 
@@ -65,13 +64,22 @@ def get_user_book(user_id: str, isbn: str, db: Session = Depends(get_db)):
 
 # Can be used to update favourite or update shelf ID
 @app.put("/users/{user_id}/books/{isbn}", tags=["user-books"])
-def update_user_book(user_id: str, isbn: Union[int, None] = None, favourite: Union[bool, None] = None, db: Session = Depends(get_db)):
-    pass
+def update_user_book(user_id: str, isbn: str, user_book: schemas.UserBookUpdate, db: Session = Depends(get_db)):
+    db_user = crud.get_user(db, user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    db_user_book = crud.get_user_book(db, user_id=user_id, isbn=isbn)
+    if db_user_book is None:
+        raise HTTPException(status_code=404, detail="User book not found")
+    return crud.update_user_book(db, user_id=user_id, isbn=isbn, user_book=user_book)
 
 # Remove book from bookshelf (delete entry from DB - user_book)
 @app.delete("/users/{user_id}/books/{isbn}", tags=["user-books"])
 def delete_user_book(user_id: str, isbn: str, db: Session = Depends(get_db)):
-    pass
+    user_book = crud.get_user_book(db, user_id=user_id, isbn=isbn)
+    if user_book is None:
+        raise HTTPException(status_code=404, detail="User book not found")
+    return crud.delete_user_book(db, user_id=user_id, isbn=isbn)
 
 # Add book to bookshelf (add entry to DB - user_book)
 @app.post("/users/{user_id}/books", tags=["user-books"])
