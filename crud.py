@@ -26,7 +26,7 @@ def get_books(db: Session, search: str):
 
 # Get shelf
 def get_user_shelf(db: Session, user_id: str, shelf_id: int):
-    return db.query(models.UserBook).filter(models.UserBook.user_id == user_id).filter(models.UserBook.shelf_id == shelf_id).all()
+    return db.query(models.UserBook.isbn, models.BookInfo.title, models.BookInfo.cover_url).join(models.BookInfo, models.UserBook.isbn == models.BookInfo.isbn).filter(models.UserBook.user_id == user_id).filter(models.UserBook.shelf_id == shelf_id).all()
 
 # Get user book
 def get_user_book(db: Session, user_id: str, isbn: str):
