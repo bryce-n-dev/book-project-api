@@ -33,3 +33,9 @@ uvicorn main:app --reload
 ```
 
 By default, the server will run on port 8000.
+
+To run static type checking with mypy, run the following command.
+
+```sh
+mypy main.py
+```
