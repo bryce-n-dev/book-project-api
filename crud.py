@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 import models, schemas
 
@@ -23,6 +24,18 @@ def get_favourites(db: Session, user_id: str):
         .join(models.BookInfo, models.UserBook.isbn == models.BookInfo.isbn)
         .filter(models.UserBook.user_id == user_id)
         .filter(models.UserBook.is_favourite == True)
+        .all())
+
+# Get recommended books
+def get_recommended(db: Session, user_id: str):
+    user_favourites = db.query(models.UserBook.isbn).filter(models.UserBook.user_id == user_id).filter(models.UserBook.is_favourite == True).subquery()
+    favourite_counts = db.query(models.UserBook.isbn, func.count(models.UserBook.is_favourite.label('count'))).filter(models.UserBook.is_favourite == True).filter(models.UserBook.isbn.not_in(user_favourites)).group_by(models.UserBook.isbn).subquery()
+
+    return (db.query(favourite_counts, models.BookInfo, models.Author.name, models.Genre.genre)
+        .join(models.BookInfo, favourite_counts.c.isbn == models.BookInfo.isbn)
+        .join(models.Author, models.BookInfo.author_id == models.Author.author_id)
+        .join(models.Genre, models.BookInfo.genre_id == models.Genre.genre_id)
+        .order_by(favourite_counts.c.count.desc())
         .all())
 
 # Get books from database that start with {search} value
