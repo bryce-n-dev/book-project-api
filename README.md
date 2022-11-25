@@ -44,6 +44,6 @@ mypy main.py
 
 To run all unit tests, run the following command.
 
-``sh
+```sh
 pytest
 ```
