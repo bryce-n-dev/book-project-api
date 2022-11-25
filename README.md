@@ -39,3 +39,9 @@ To run static type checking with mypy, run the following command.
 ```sh
 mypy main.py
 ```
+
+To run all unit tests, run the following command.
+
+``sh
+pytest
+```
