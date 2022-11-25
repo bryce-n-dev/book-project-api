@@ -4,8 +4,17 @@ from fastapi import Depends, FastAPI, HTTPException
 import crud, schemas
 from database import SessionLocal
 
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins="http://localhost:3000/",
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def get_db():
     db = SessionLocal()
