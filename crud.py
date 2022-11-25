@@ -39,8 +39,10 @@ def get_book_by_isbn(db: Session, isbn: str):
 
 # Get shelf
 def get_user_shelf(db: Session, user_id: str, shelf_id: int):
-    return (db.query(models.UserBook.isbn, models.BookInfo.title, models.BookInfo.cover_url)
+    return (db.query(models.UserBook, models.BookInfo, models.Author.name, models.Genre.genre)
         .join(models.BookInfo, models.UserBook.isbn == models.BookInfo.isbn)
+        .join(models.Author, models.BookInfo.author_id == models.Author.author_id)
+        .join(models.Genre, models.BookInfo.genre_id == models.Genre.genre_id)
         .filter(models.UserBook.user_id == user_id)
         .filter(models.UserBook.shelf_id == shelf_id)
         .all())
