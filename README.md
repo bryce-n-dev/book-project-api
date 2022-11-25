@@ -22,6 +22,8 @@ cd ../..
 pip install fastapi
 pip install "uvicorn[standard]"
 pip install sqlalchemy
+pip install httpx
+pip install pytest
 ```
 
 ## Usage
