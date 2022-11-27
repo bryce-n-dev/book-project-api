@@ -22,6 +22,8 @@ cd ../..
 pip install fastapi
 pip install "uvicorn[standard]"
 pip install sqlalchemy
+pip install httpx
+pip install pytest
 ```
 
 ## Usage
@@ -38,4 +40,10 @@ To run static type checking with mypy, run the following command.
 
 ```sh
 mypy main.py
+```
+
+To run all unit tests, run the following command.
+
+```sh
+pytest
 ```
