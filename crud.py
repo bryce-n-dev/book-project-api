@@ -76,10 +76,10 @@ def update_user_book(db: Session, user_id: str, isbn: str, user_book: schemas.Us
         .filter(models.UserBook.user_id == user_id)
         .filter(models.UserBook.isbn == isbn)
         .first())
-    if db_user_book:
-        if user_book.is_favourite:
+    if db_user_book is not None:
+        if user_book.is_favourite is not None:
             db_user_book.is_favourite = user_book.is_favourite
-        if user_book.shelf_id:
+        if user_book.shelf_id is not None:
             db_user_book.shelf_id = user_book.shelf_id
     db.add(db_user_book)
     db.commit()
