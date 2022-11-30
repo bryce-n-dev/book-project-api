@@ -20,8 +20,10 @@ def get_user(db: Session, user_id: str):
 
 # Get favourite books
 def get_favourites(db: Session, user_id: str):
-    return (db.query(models.UserBook.isbn, models.BookInfo.title, models.BookInfo.cover_url)
+    return (db.query(models.UserBook, models.BookInfo, models.Author.name, models.Genre.genre)
         .join(models.BookInfo, models.UserBook.isbn == models.BookInfo.isbn)
+        .join(models.Author, models.BookInfo.author_id == models.Author.author_id)
+        .join(models.Genre, models.BookInfo.genre_id == models.Genre.genre_id)
         .filter(models.UserBook.user_id == user_id)
         .filter(models.UserBook.is_favourite == True)
         .all())
