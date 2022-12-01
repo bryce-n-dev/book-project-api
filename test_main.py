@@ -72,36 +72,35 @@ def test_get_user_shelf():
     pass
 
 def test_get_user_book():
-    response = client.get('/users/bogus1/books/')
+    response = client.get('/users/bogus1/books/9780553573398')
     assert response.status_code == 200
-    assert response.json() == {
-        "isbn": "book1",
-        "user_id": "user1",
-        "shelf_id": "123",
-        "pages_read": "123",
-        "date_started_reading": "01/01/01",
-        "date_finished_reading": "01/01/01",
-        "rating": "3",
-        "review": "good",
-        "is_favourite": "false"
-    }
-    pass
+    assert response.json()["isbn"] == '9780553573398'
+
+def test_get_invalid_book():
+    response = client.get('/users/bogus1/books/9780765311700')
+    assert response.status_code == 404
+    assert response.json() == {"detail": "User book not found"}
+
 
 def test_update_user_book():
-    response = client.put('/users/bogus1/books/')
+    response = client.put('/users/bogus1/books/9780312330873', json = {
+        "isbn":  "9780312330873",
+        "user_id": "bogus1",
+        "shelf_id": "2"
+    })
     assert response.status_code == 200
-    pass
-
-def test_delete_user_book():
-    #isbn = user_book.isbn
-    #delete_user_book(isbn)
-
-    response = client.delete("/users/bogus1/books/")
-    assert response.status_code == 200
-
-    pass
+    assert response.json()["shelf_id"] == 2
 
 def test_create_user_book():
-    response = client.post("/users/bogus1/books/", json = data)
+    response = client.post("/users/bogus1/books/", json = {
+        "isbn":  "9782253140870",
+        "user_id": "bogus1",
+        "shelf_id": "2"
+    })
     assert response.status_code == 200
-    assert response.json() == data
+    assert response.json()["isbn"] == '9782253140870'
+
+
+def test_delete_user_book():
+    response = client.delete("/users/bogus1/books/9782253140870")
+    assert response.status_code == 200
