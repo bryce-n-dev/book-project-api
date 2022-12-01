@@ -9,7 +9,7 @@ Run the follow code below to create a virtual environment and install the requir
 ```sh
 python3 -m venv venv
 source venv/bin/activate
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 ### For Windows
