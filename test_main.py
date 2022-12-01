@@ -1,9 +1,14 @@
 from fastapi.testclient import TestClient
+import json
 
 from main import app
 
 client = TestClient(app)
 
+data = {
+    "isbn": "testbook",
+    "user_id": "testuser"
+}
 
 def test_get_user():
     response = client.get('/users/bogus1')
@@ -19,30 +24,20 @@ def test_get_invalid_user():
     assert response.json() == {"detail": "User not found"}
 
 def test_get_favourites():
-    response = client.get('/users/1234/favourites')
+    response = client.get('/users/bogus1/favourites')
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "isbn": "9780765311788",
-            "title": "The Final Empire",
-            "cover_url": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1617768316i/68428.jpg"
-        },
-        {
-            "isbn": "9782253140870",
-            "title": "L'Ecume des jours",
-            "cover_url": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1332596603i/141828.jpg"
-        }
-    ]
+    assert response.json()["isbn"] == 9780765311788
+
     pass
 
 def test_get_books():
-    response = client.get('/books')
+    response = client.get('/books/', json=data)
     assert response.status_code == 200
-
+    assert data in response.json()
     pass
 
 def test_get_user_shelf():
-    response = client.get('/users/1234/shelves/1')
+    response = client.get('/users/bogus1/shelves/1')
     assert response.status_code == 200
     assert response.json() == [
       {
@@ -77,7 +72,7 @@ def test_get_user_shelf():
     pass
 
 def test_get_user_book():
-    response = client.get('/users/1234/books/9780063021426')
+    response = client.get('/users/bogus1/books/')
     assert response.status_code == 200
     assert response.json() == {
         "isbn": "book1",
@@ -93,34 +88,20 @@ def test_get_user_book():
     pass
 
 def test_update_user_book():
-    response = client.post('/users/{user_id}/books/{isbn}')
+    response = client.put('/users/bogus1/books/')
     assert response.status_code == 200
     pass
 
 def test_delete_user_book():
-    isbn = user_book.isbn
-    delete_user_book(isbn)
+    #isbn = user_book.isbn
+    #delete_user_book(isbn)
 
-    ############ TO DO ############
+    response = client.delete("/users/bogus1/books/")
+    assert response.status_code == 200
 
     pass
 
 def test_create_user_book():
-    data = {
-        "isbn": "testbook",
-        "user_id": "testuser"
-    }
-    response = client.post("/users/{user_id}/books/{isbn}", json.dumps(data))
+    response = client.post("/users/bogus1/books/", json = data)
     assert response.status_code == 200
-    assert response.json() == {
-        "isbn": "whatever",
-        "user_id": "something",
-        "shelf_id": "aNumber",
-        "pages_read": "none",
-        "date_started_reading": "tbd",
-        "date_finished_reading": "tbd",
-        "rating": "one",
-        "review": "goodORbad",
-        "is_favourite": "false"
-    }
-    pass
+    assert response.json() == data
