@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+# Add CORS middleware to avoid CORS error with front-end
 app.add_middleware(
     CORSMiddleware,
     allow_origins="http://localhost:3000/",
@@ -16,12 +17,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Set up database session
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+
+# Below are all of endpoints that our API exposes. The code is all fairly self explanatory.
+# Some pointers:
+# Most - if not all endpoints will verify that a database row exists before trying to manipulate its values.
+# If the required resource(s) do not exist, the API will throw an HTTP code 4XX.
 
 # Create new user
 @app.post("/users", tags=["users"])

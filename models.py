@@ -3,6 +3,11 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date
 from database import Base
 
 
+# models.py 
+# These classes are used to define the shape of the database.
+# This allows us to manipulate the database more easily, using pythonic code with the SQLAlchemy library.
+# See crud.py for these classes in use.
+
 class Author(Base):
     __tablename__ = "author"
 
