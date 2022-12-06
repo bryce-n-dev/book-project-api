@@ -39,7 +39,6 @@ def get_favourites(db: Session, user_id: str):
 def get_recommended(db: Session, user_id: str):
     user_favourites = (db.query(models.UserBook.isbn)
         .filter(models.UserBook.user_id == user_id)
-        .filter(models.UserBook.is_favourite == True)
         .subquery())
     favourite_counts = (db.query(models.UserBook.isbn, func.count(models.UserBook.is_favourite.label('count')))
         .filter(models.UserBook.is_favourite == True)
